@@ -1,0 +1,10 @@
+README.md
+setup.py
+privacy_checks/__init__.py
+privacy_checks/checker.py
+privacy_checks/mcprofiler.py
+privacy_checks.egg-info/PKG-INFO
+privacy_checks.egg-info/SOURCES.txt
+privacy_checks.egg-info/dependency_links.txt
+privacy_checks.egg-info/requires.txt
+privacy_checks.egg-info/top_level.txt

@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: privacy-checks
+Version: 0.1
+Summary: A Python library for privacy checks
+Author: Mark deGroat
+Author-email: mark.degroat@rearc.io
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Description-Content-Type: text/markdown
+
+A Python library for performing various privacy checks on data.
