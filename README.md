@@ -51,8 +51,8 @@ privacy_checker = Checker(
     alpha_threshold=0.5,
     beta_threshold=0.5,
     enhanced_beta_threshold=0.5,
-    entropy_l_threshold=0.5,
-    l_threshold=0.5,
+    entropy_l_threshold=1,
+    l_threshold=1,
     c_threshold=0.5,
     t_threshold=0.5
 )
