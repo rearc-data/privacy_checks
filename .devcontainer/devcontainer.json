@@ -18,7 +18,11 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "pip3 install --user -r requirements.txt",
+	"postCreateCommand": { 
+		"update": ["sudo", "apt-get", "update"],
+		"deps": "sudo apt-get install -y libsnappy-dev",
+		"library": ["pip3", "install", "--user", "-e", "."]
+	}
 
 	// Configure tool-specific properties.
 	// "customizations": {},
