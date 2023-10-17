@@ -1,10 +1,15 @@
-class BasicBetaLikenessChecker(BasicChecker(title='Basic Beta-Likeness')):
+from pandas import DataFrame
+from pycanon import anonymity, report
+from .basic_checker import BasicChecker
+
+class BasicBetaLikenessChecker(BasicChecker):
     def __init__(
         self,
         qi: list,
         sa: list = [],
         beta_threshold: float = None,
     ):
+        super().__init__('Basic Beta-Likeness')
         if not isinstance(qi, list):
             raise TypeError("qi must be a list.")
         if not isinstance(sa, list):
@@ -16,7 +21,7 @@ class BasicBetaLikenessChecker(BasicChecker(title='Basic Beta-Likeness')):
         self.beta_threshold = beta_threshold
 
     def check_dataset(self, df: DataFrame):
-        beta_likeness = anonymity.basic_beta_likeness(df, self.qi, self.sa)
+        beta_likeness = anonymity.basic_beta_likeness(df, self.qi, self.sa)[0]
         if not beta_likeness:
             return {
                 'message': 'Basic Beta-Likeness check has failed.',

@@ -1,10 +1,15 @@
-class EnhancedBetaLikenessChecker(BasicChecker(title='Enhanced Beta-Likeness')):
+from pandas import DataFrame
+from pycanon import anonymity, report
+from .basic_checker import BasicChecker
+
+class EnhancedBetaLikenessChecker(BasicChecker):
     def __init__(
         self,
         qi: list,
         sa: list = [],
         enhanced_beta_threshold: float = None,
     ):
+        super().__init__('Enhanced Beta-Likeness')
         if not isinstance(qi, list):
             raise TypeError("qi must be a list.")
         if not isinstance(sa, list):
@@ -16,7 +21,7 @@ class EnhancedBetaLikenessChecker(BasicChecker(title='Enhanced Beta-Likeness')):
         self.enhanced_beta_threshold = enhanced_beta_threshold
 
     def check_dataset(self, df: DataFrame):
-        enhanced_beta_likeness = anonymity.enhanced_beta_likeness(df, self.qi, self.sa)
+        enhanced_beta_likeness = anonymity.enhanced_beta_likeness(df, self.qi, self.sa)[0]
         if not enhanced_beta_likeness:
             return {
                 'message': 'Enhanced Beta-Likeness check has failed.',

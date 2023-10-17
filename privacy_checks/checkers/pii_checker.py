@@ -1,12 +1,11 @@
 import pandas as pd
 import json
 from dataprofiler import Data, Profiler
-from basic_checker import BasicChecker
+from .basic_checker import BasicChecker
 
-class PIIChecker(BasicChecker(title='PII Checker')):
+class PIIChecker(BasicChecker):
     def __init__(
         self,
-        df: pd.DataFrame,
         labels: list = [
             "BAN",
             "CREDIT_CARD",
@@ -16,6 +15,7 @@ class PIIChecker(BasicChecker(title='PII Checker')):
         ],
         detection_threshold: float = 0.5,
     ):
+        super().__init__('PII Checker')
         if not isinstance(labels, list):
             raise TypeError("labels must be a list.")
         if not isinstance(df, pd.DataFrame):
@@ -24,17 +24,17 @@ class PIIChecker(BasicChecker(title='PII Checker')):
             raise TypeError("detection_threshold must be a float.")
 
         # Assign values to instance variables
-        self.df = df
-        self.data = Data(data=df, data_type='csv')
+        # self.df = df
+        # self.data = Data(data=df, data_type='csv')
         self.profile = None
         self.report = None
         self.detection_threshold = detection_threshold
         self.labels = labels
 
-    def generate_report(self):
+    def generate_report(self, data):
         # Perform k-anonymity check on the DataFrame
         if (not self.profile):
-            self.profile = Profiler(self.data)
+            self.profile = Profiler(data)
         if (not self.report):
             self.report = self.profile.report(
                 report_options={'output_format': 'pretty'})
@@ -56,10 +56,11 @@ class PIIChecker(BasicChecker(title='PII Checker')):
             }
             print(f"{col_data['column_name']}: {json.dumps(stats)}")
 
-    def detect_pii_columns(self):
+    def detect_pii_columns(self, df):
         # PII Labels we care about
+        data = Data(data=df, data_type='csv')
         if (not self.report):
-            self.generate_report()
+            self.generate_report(data)
 
         detected_pii_columns = False
         for col_data in self.report["data_stats"]:
@@ -98,5 +99,5 @@ class PIIChecker(BasicChecker(title='PII Checker')):
                 'threshold': None
             }
 
-    def check_dataset(self):
-        return self.detect_pii_columns()
+    def check_dataset(self, df):
+        return self.detect_pii_columns(df)

@@ -1,10 +1,15 @@
-class LDiversityChecker(BasicChecker(title='L-Diversity')):
+from pandas import DataFrame
+from pycanon import anonymity, report
+from .basic_checker import BasicChecker
+
+class LDiversityChecker(BasicChecker):
     def __init__(
         self,
         qi: list,
         sa: list = [],
         l_threshold: int = None,
     ):
+        super().__init__('L-Diversity')
         if not isinstance(qi, list):
             raise TypeError("qi must be a list.")
         if not isinstance(sa, list):

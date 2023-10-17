@@ -1,14 +1,14 @@
 from pandas import DataFrame
-from .checkers.basic_checker import 
-  BasicChecker,
-  AlphaKAnonymityChecker,
-  KAnonymityChecker,
-  LDiversityChecker,
-  EntropyLDiversityChecker,
-  CDiversityChecker,
-  TClosenessChecker,
-  DeltaDisclosurePrivacyChecker,
-  NullRowChecker
+from checkers.basic_checker import BasicChecker
+from checkers.null_row_checker import NullRowChecker
+from checkers.k_anonymity_checker import KAnonymityChecker
+from checkers.alpha_k_anonymity_checker import AlphaKAnonymityChecker
+from checkers.l_diversity_checker import LDiversityChecker
+from checkers.entropy_l_diversity_checker import EntropyLDiversityChecker
+from checkers.c_l_diversity_checker import CLDiversityChecker
+from checkers.t_closeness_checker import TClosenessChecker
+from checkers.delta_disclosure_privacy_checker import DeltaDisclosurePrivacyChecker
+
 
 # Single entry point for interacting with utility instead of individual classes for each checker
 # - Support providing df
@@ -22,6 +22,8 @@ class PrivacyRunner:
         full_suite_run: bool = False,
     ):
     self.checkers = checkers
+    self.dry_run = dry_run
+    self.full_suite_run = full_suite_run
     pass
 
   def evaluate_data(self, df: DataFrame):
@@ -42,6 +44,7 @@ class PrivacyRunner:
           response_string += f" {checker.title} value: {result['value']}."
         if result['threshold']:
           response_string += f" {checker.title} threshold: {result['threshold']}."
+        print(response_string)
       else:
         response_string = f"{checker.title} check failed."
         if result['value']:
@@ -65,18 +68,18 @@ class PrivacyRunner:
     # TODO: fix this function to deal with new format of individualized checkers
 
 class CheckerSuites:
-  def std_privacy_suite(cls, qi: list, sa: list = []): 
+  def std_privacy_suite(qi: list, sa: list = []): 
     return [
       KAnonymityChecker(qi=qi, k_threshold=5),    
       NullRowChecker()
     ]
-  def full_privacy_suite(cls, qi: list, sa: list = []): 
+  def full_privacy_suite(qi: list, sa: list = []): 
     return [
       KAnonymityChecker(qi=qi, k_threshold=5),
-      AlphaKAnonymityChecker(qi=qi, k_threshold=5, alpha_threshold=0.5),
+      AlphaKAnonymityChecker(qi=qi, sa=sa, alpha_threshold=0.5),
       LDiversityChecker(qi=qi, sa=sa, l_threshold=2),
-      EntropyLDiversityChecker(qi=qi, sa=sa, l_threshold=2),
-      CDiversityChecker(qi=qi, sa=sa, c_threshold=2),
+      EntropyLDiversityChecker(qi=qi, sa=sa, entropy_l_threshold=2),
+      CLDiversityChecker(qi=qi, sa=sa, c_threshold=2),
       TClosenessChecker(qi=qi, sa=sa, t_threshold=0.2),
       DeltaDisclosurePrivacyChecker(qi=qi, sa=sa, delta_threshold=0.2),
       NullRowChecker()

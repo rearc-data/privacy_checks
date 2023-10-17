@@ -1,10 +1,15 @@
-class AlphaKAnonymityChecker(BasicChecker(title='(Alpha, K)-Anonymity')):
+from pandas import DataFrame
+from pycanon import anonymity, report
+from .basic_checker import BasicChecker
+
+class AlphaKAnonymityChecker(BasicChecker):
     def __init__(
         self,
         qi: list,
         sa: list = [],
         alpha_threshold: float = None,
     ):
+        super().__init__('(Alpha, K)-Anonymity')
         if not isinstance(qi, list):
             raise TypeError("qi must be a list.")
         if not isinstance(sa, list):
@@ -16,7 +21,7 @@ class AlphaKAnonymityChecker(BasicChecker(title='(Alpha, K)-Anonymity')):
         self.alpha_threshold = alpha_threshold
 
     def check_dataset(self, df: DataFrame):
-        alpha_k = anonymity.alpha_k_anonymity(df, self.qi, self.sa)
+        alpha_k = anonymity.alpha_k_anonymity(df, self.qi, self.sa)[0]
         if not alpha_k:
             return {
                 'message': '(Alpha, K)-anonymity check has failed.',

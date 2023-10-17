@@ -1,10 +1,15 @@
-class TClosenessChecker(BasicChecker(title='T-Closeness')):
+from pandas import DataFrame
+from pycanon import anonymity, report
+from .basic_checker import BasicChecker
+
+class TClosenessChecker(BasicChecker):
     def __init__(
         self,
         qi: list,
         sa: list = [],
         t_threshold: float = None,
     ):
+        super().__init__('T-Closeness')
         if not isinstance(qi, list):
             raise TypeError("qi must be a list.")
         if not isinstance(sa, list):
@@ -17,6 +22,7 @@ class TClosenessChecker(BasicChecker(title='T-Closeness')):
 
     def check_dataset(self, df: DataFrame):
         t_closeness = anonymity.t_closeness(df, self.qi, self.sa)
+        print(t_closeness)
         if not t_closeness:
             return {
                 'message': 'T-Closeness check has failed.',

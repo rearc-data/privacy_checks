@@ -1,20 +1,20 @@
 from pandas import DataFrame
 from pycanon import anonymity, report
-from basic_checker import BasicChecker
+from .basic_checker import BasicChecker
 
 
-class KAnonymityChecker(BasicChecker(title='K-Anonymity')):
+class KAnonymityChecker(BasicChecker):
     def __init__(
         self,
         qi: list,
         k_threshold: int = None,
     ):
+        super().__init__('K-Anonymity')
         if not isinstance(qi, list):
             raise TypeError("qi must be a list.")
 
         # Assign values to instance variables
         self.qi = qi
-        self.sa = sa
         self.k_threshold = k_threshold
 
     def check_dataset(self, df: DataFrame):

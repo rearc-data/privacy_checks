@@ -1,10 +1,15 @@
-class EntropyLDiversityChecker(BasicChecker(title='Entropy L-Diversity')):
+from pandas import DataFrame
+from pycanon import anonymity, report
+from .basic_checker import BasicChecker
+
+class EntropyLDiversityChecker(BasicChecker):
     def __init__(
         self,
         qi: list,
         sa: list = [],
         entropy_l_threshold: int = None,
     ):
+        super().__init__('Entropy L-Diversity')
         if not isinstance(qi, list):
             raise TypeError("qi must be a list.")
         if not isinstance(sa, list):

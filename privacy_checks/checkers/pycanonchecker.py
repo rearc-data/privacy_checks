@@ -1,6 +1,6 @@
 from pandas import DataFrame
 from pycanon import anonymity, report
-from basic_checker import BasicChecker
+from .basic_checker import BasicChecker
 
 
 class PyCanonChecker(BasicChecker):

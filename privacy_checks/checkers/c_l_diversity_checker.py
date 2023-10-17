@@ -1,10 +1,15 @@
-class CLDiversityChecker(BasicChecker(title='(C, L)-Diversity')):
+from pandas import DataFrame
+from pycanon import anonymity, report
+from .basic_checker import BasicChecker
+
+class CLDiversityChecker(BasicChecker):
     def __init__(
         self,
         qi: list,
         sa: list = [],
         c_threshold: float = None,
     ):
+        super().__init__('(C, L)-Diversity')
         if not isinstance(qi, list):
             raise TypeError("qi must be a list.")
         if not isinstance(sa, list):
@@ -16,7 +21,7 @@ class CLDiversityChecker(BasicChecker(title='(C, L)-Diversity')):
         self.c_threshold = c_threshold
 
     def check_dataset(self, df: DataFrame):
-        c_l_div = anonymity.recursive_c_l_diversity(df, self.qi, self.sa)
+        c_l_div = anonymity.recursive_c_l_diversity(df, self.qi, self.sa)[0]
         if not c_l_div:
             return {
                 'message': '(C, L)-diversity check has failed.',

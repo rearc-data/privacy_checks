@@ -1,10 +1,15 @@
-class DeltaDisclosurePrivacyChecker(BasicChecker(title='Delta-Disclosure Privacy')):
+from pandas import DataFrame
+from pycanon import anonymity, report
+from .basic_checker import BasicChecker
+
+class DeltaDisclosurePrivacyChecker(BasicChecker):
     def __init__(
         self,
         qi: list,
         sa: list = [],
         delta_threshold: float = None,
     ):
+        super().__init__('Delta-Disclosure Privacy')
         if not isinstance(qi, list):
             raise TypeError("qi must be a list.")
         if not isinstance(sa, list):
