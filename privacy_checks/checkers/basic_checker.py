@@ -9,10 +9,12 @@ class BasicChecker:
 
   def check_dataset(self, df: DataFrame) -> bool:
     return False
-  
+
     # TODO: What does a response look like for a checker?
     # {
     #   message: str,
     #   title: str <k-anonmity control>,
-    #   status: bool
+    #   status: bool,
+    #   value: float,
+    #   threshold: float
     # }

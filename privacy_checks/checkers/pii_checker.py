@@ -3,7 +3,7 @@ import json
 from dataprofiler import Data, Profiler
 from basic_checker import BasicChecker
 
-class MCProfiler(BasicChecker(title='MC Profiler')):
+class PIIChecker(BasicChecker(title='PII Checker')):
     def __init__(
         self,
         df: pd.DataFrame,
@@ -39,18 +39,6 @@ class MCProfiler(BasicChecker(title='MC Profiler')):
             self.report = self.profile.report(
                 report_options={'output_format': 'pretty'})
         return self.report
-
-    def null_row_check(self):
-        if (not self.report):
-            self.generate_report()
-        null_threshold = 0
-        if self.report['global_stats']['row_is_null_ratio'] > null_threshold:
-            # print("Null rows found in dataset")
-            # raise Exception("Detected null rows within data set")
-            return (False, 0, 'Null rows found in dataset')
-        else:
-            # print("No null rows found in dataset")
-            return (True, 0, 'No null rows found in dataset')
 
     def print_metrics(self):
         # Stats for Reporting
@@ -91,7 +79,24 @@ class MCProfiler(BasicChecker(title='MC Profiler')):
         if detected_pii_columns:
             # print("Detected unexpected privacy columns!")
             # raise Exception("Detected data columns with potential PII")
-            return (False, 0, 'Detected data columns with potential PII')
+            # return (False, 0, 'Detected data columns with potential PII')
+            return {
+                'message': 'Detected data columns with potential PII.',
+                'title': 'PII control',
+                'status': False,
+                'value': None,
+                'threshold': None
+            }
         else:
             print("No unexpected privacy columns detected")
-            return (True, 0, 'No unexpected privacy columns detected')
+            #return (True, 0, 'No unexpected privacy columns detected')
+            return {
+                'message': 'No columns with PII detected.',
+                'title': 'PII control',
+                'status': True,
+                'value': None,
+                'threshold': None
+            }
+
+    def check_dataset(self):
+        return self.detect_pii_columns()
