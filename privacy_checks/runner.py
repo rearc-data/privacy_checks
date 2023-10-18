@@ -68,20 +68,20 @@ class PrivacyRunner:
     # TODO: fix this function to deal with new format of individualized checkers
 
 class CheckerSuites:
-  def std_privacy_suite(qi: list, sa: list = []): 
+  def std_privacy_suite(qi: list, sa: list = [], custom_thresholds: dict = {}): 
     return [
-      KAnonymityChecker(qi=qi, k_threshold=5),    
+      KAnonymityChecker(qi=qi, k_threshold=custom_thresholds.get('k_threshold', 5)),    
       NullRowChecker()
     ]
-  def full_privacy_suite(qi: list, sa: list = []): 
+  def full_privacy_suite(qi: list, sa: list = [], custom_thresholds: dict = {}): 
     return [
-      KAnonymityChecker(qi=qi, k_threshold=5),
-      AlphaKAnonymityChecker(qi=qi, sa=sa, alpha_threshold=0.5),
-      LDiversityChecker(qi=qi, sa=sa, l_threshold=2),
-      EntropyLDiversityChecker(qi=qi, sa=sa, entropy_l_threshold=2),
-      CLDiversityChecker(qi=qi, sa=sa, c_threshold=2),
-      TClosenessChecker(qi=qi, sa=sa, t_threshold=0.2),
-      DeltaDisclosurePrivacyChecker(qi=qi, sa=sa, delta_threshold=0.2),
+      KAnonymityChecker(qi=qi, k_threshold=custom_thresholds.get('k_threshold', 5)),
+      AlphaKAnonymityChecker(qi=qi, sa=sa, alpha_threshold=custom_thresholds.get('alpha_threshold', 0.5)),
+      LDiversityChecker(qi=qi, sa=sa, l_threshold=custom_thresholds.get('l_threshold', 2)),
+      EntropyLDiversityChecker(qi=qi, sa=sa, entropy_l_threshold=custom_thresholds.get('entropy_l_threshold', 2)),
+      CLDiversityChecker(qi=qi, sa=sa, c_threshold=custom_thresholds.get('c_threshold', 2)),
+      TClosenessChecker(qi=qi, sa=sa, t_threshold=custom_thresholds.get('t_threshold', 0.2)),
+      DeltaDisclosurePrivacyChecker(qi=qi, sa=sa, delta_threshold=custom_thresholds.get('delta_threshold', 0.2)),
       NullRowChecker()
     ]
   

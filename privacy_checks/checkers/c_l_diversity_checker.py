@@ -21,7 +21,7 @@ class CLDiversityChecker(BasicChecker):
         self.c_threshold = c_threshold
 
     def check_dataset(self, df: DataFrame):
-        c_l_div = anonymity.recursive_c_l_diversity(df, self.qi, self.sa)[0]
+        c_l_div = anonymity.recursive_c_l_diversity(df, self.qi, self.sa)[1]
         if not c_l_div:
             return {
                 'message': '(C, L)-diversity check has failed.',

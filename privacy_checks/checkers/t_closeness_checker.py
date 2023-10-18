@@ -22,7 +22,6 @@ class TClosenessChecker(BasicChecker):
 
     def check_dataset(self, df: DataFrame):
         t_closeness = anonymity.t_closeness(df, self.qi, self.sa)
-        print(t_closeness)
         if not t_closeness:
             return {
                 'message': 'T-Closeness check has failed.',
