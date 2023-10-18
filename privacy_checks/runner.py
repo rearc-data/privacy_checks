@@ -1,13 +1,13 @@
 from pandas import DataFrame
-from checkers.basic_checker import BasicChecker
-from checkers.null_row_checker import NullRowChecker
-from checkers.k_anonymity_checker import KAnonymityChecker
-from checkers.alpha_k_anonymity_checker import AlphaKAnonymityChecker
-from checkers.l_diversity_checker import LDiversityChecker
-from checkers.entropy_l_diversity_checker import EntropyLDiversityChecker
-from checkers.c_l_diversity_checker import CLDiversityChecker
-from checkers.t_closeness_checker import TClosenessChecker
-from checkers.delta_disclosure_privacy_checker import DeltaDisclosurePrivacyChecker
+from privacy_checks.checkers.basic_checker import BasicChecker
+from privacy_checks.checkers.null_row_checker import NullRowChecker
+from privacy_checks.checkers.k_anonymity_checker import KAnonymityChecker
+from privacy_checks.checkers.alpha_k_anonymity_checker import AlphaKAnonymityChecker
+from privacy_checks.checkers.l_diversity_checker import LDiversityChecker
+from privacy_checks.checkers.entropy_l_diversity_checker import EntropyLDiversityChecker
+from privacy_checks.checkers.c_l_diversity_checker import CLDiversityChecker
+from privacy_checks.checkers.t_closeness_checker import TClosenessChecker
+from privacy_checks.checkers.delta_disclosure_privacy_checker import DeltaDisclosurePrivacyChecker
 
 
 # Single entry point for interacting with utility instead of individual classes for each checker

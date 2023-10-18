@@ -9,3 +9,6 @@ from .l_diversity_checker import LDiversityChecker
 from .null_row_checker import NullRowChecker
 from .t_closeness_checker import TClosenessChecker
 from .basic_checker import BasicChecker
+
+PACKAGE_NAME = "checkers"
+PACKAGE_VERSION = "0.1"
