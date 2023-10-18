@@ -20,52 +20,45 @@ class PrivacyRunner:
         checkers: list[BasicChecker] = [],
         dry_run: bool = False,
         full_suite_run: bool = False,
+        verbose: bool = True
     ):
     self.checkers = checkers
     self.dry_run = dry_run
     self.full_suite_run = full_suite_run
+    self.verbose = verbose
     pass
+  
+  def build_response_str(self, checker_title, result):
+    if result['status']:
+      response_string = f"{checker_title} check passed."
+      if result['value']:
+        response_string += f" {checker_title} value: {result['value']}."
+      if result['threshold']:
+        response_string += f" {checker_title} threshold: {result['threshold']}."
+    else:
+      response_string = f"{checker_title} check failed."
+      if result['value']:
+        response_string += f" {checker_title} value: {result['value']}."
+      if result['threshold']:
+        response_string += f" {checker_title} threshold: {result['threshold']}."
+    return response_string
 
   def evaluate_data(self, df: DataFrame):
     failed = False
     for checker in self.checkers:
       result = checker.check_dataset(df=df)
-      if result['status']:
-        response_string = f"{checker.title} check passed."
-        if result['value']:
-          response_string += f" {checker.title} value: {result['value']}."
-        if result['threshold']:
-          response_string += f" {checker.title} threshold: {result['threshold']}."
-        print(response_string)
-      elif self.full_suite_run:
-        failed = True
-        response_string = f"{checker.title} check failed."
-        if result['value']:
-          response_string += f" {checker.title} value: {result['value']}."
-        if result['threshold']:
-          response_string += f" {checker.title} threshold: {result['threshold']}."
-        print(response_string)
-      else:
-        response_string = f"{checker.title} check failed."
-        if result['value']:
-          response_string += f" {checker.title} value: {result['value']}."
-        if result['threshold']:
-          response_string += f" {checker.title} threshold: {result['threshold']}."
-        print(response_string)
-        raise Exception(response_string)
-
+      #print(result)
+      response_str = self.build_response_str(checker.title, result)
+      if self.verbose:
+        print(response_str)
+      #test fails
+      if not result['status']:
+        failed = True;
+        #if we don't want full suite to run, except here
+        if not self.full_suite_run:
+          raise Exception(response_str)
     if failed and not self.dry_run:
       raise Exception("Privacy checks failed.")
-
-    # for passed in passed_evaluations:
-    #   print(f"{passed[3]} check passed, {passed[3]} value: {passed[1]}")
-    # if(len(failed_evaluations) > 0):
-    #   for failure in failed_evaluations:
-    #     print(f"{failure[3]} check failed, {failure[3]} value: {failure[1]}")
-    #   if(not dry_run):
-    #     raise Exception("Privacy checks failed.")
-    # TODO: Report out failing checks, if at least one failed, throw exception if not dry_run
-    # TODO: fix this function to deal with new format of individualized checkers
 
 class CheckerSuites:
   def std_privacy_suite(qi: list, sa: list = [], custom_thresholds: dict = {}): 
