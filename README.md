@@ -1,8 +1,9 @@
 # Overview
 This library is intended to demonstrate creating a wrapper library for common data scanning tools that are available for installation via pip.
-As of now there are two included privacy check classes, Checker and MCProfiler. 
+As of now there are 12 included privacy checks that can be run against a dataset. 
 ## Checker class
-Checker is a wrapper for the [pycanon](https://pypi.org/project/pycanon/) library, that is described in detail in this [Nature article](https://www.nature.com/articles/s41597-022-01894-2).
+A number of them are wrappers for the [pycanon](https://pypi.org/project/pycanon/) library, that is described in detail in this [Nature article](https://www.nature.com/articles/s41597-022-01894-2).
+The rest are wrappers for the DataProfiler library provided by Capital One, which is documented [here](https://github.com/capitalone/DataProfiler).
 
 At a minimum, you need to provide the class a set of [Quasi identifiers](https://en.wikipedia.org/wiki/Quasi-identifier) in order to perform a k-anonymity, which is represented by a list of of the column names from the dataframe written as strings.
 In order to take advantage of other metrics available such as l-diversity, you will also need to provide a single (or set) of [Sensitive Attributes](https://arx.deidentifier.org/overview/privacy-criteria/), which is described as
@@ -28,10 +29,11 @@ If you want to block execution of a notebook based on the results of any of thes
 - L-Diversity = l_threshold (int)
 - Recursive (c,l)-diversity = c_threshold (float)
 - T-Closeness = t_threshold (float)
-An example instantiating the Checker class and setting all possible thresholds:
+
+An example instantiating the Runner class and setting all possible thresholds:
 
 ```python
-from privacy_checks.checker import Checker
+from privacy_checks.runner import PrivacyRunner, CheckerSuites
 # replace with your dataset you want to target
 users_df = spark.read.table('unicorn_app.synthetic.users_indexed')
 users_df = users_df.toPandas()
@@ -43,38 +45,73 @@ QI = [
 ]
 # add any columns that would be consider sensitive attributes
 SA = ["FICO_Score"]
-privacy_checker = Checker(
-    qi=QI,
-    df=user_df,
-    sa=SA,
-    k_threshold=5,
-    alpha_threshold=0.5,
-    beta_threshold=0.5,
-    enhanced_beta_threshold=0.5,
-    entropy_l_threshold=1,
-    l_threshold=1,
-    c_threshold=0.5,
-    t_threshold=0.5
-)
-result = privacy_checker.run_tests_generate_report()
+custom_thresholds = {
+    'k_threshold': 2,
+    'alpha_threshold': 1,
+    'l_threshold': 1,
+    'entropy_l_threshold': 2,
+    'c_threshold': 2,
+    't_threshold': 1,
+    'delta_threshold': 1
+}
+
+runner = PrivacyRunner(checkers=CheckerSuites.full_privacy_suite(qi=qi, sa=sa, custom_thresholds=custom_thresholds), dry_run=False, full_suite_run=True, verbose=True)
+runner.evaluate_data(users_df)
 ```
-If you don't want to have any of the tests fail the notebook, you can simply not set the threshold for that test.  The test will still be run and results returned regardless.
+If you don't want to have any of the tests fail the notebook, you can set dry_run to True.  The test will still be run and results returned regardless, but it will not fail the rest of the notebook execution.
 
-## MCProfiler class
-MCProfile is a wrapper for the DataProfiler library provided by Capital One, which is documented [here](https://github.com/capitalone/DataProfiler).
-
-The MCProfiler class provides a few methods to generate a report, print metrics, perform a null roll check and detect PII columns.
-
-You only need to pass this class a dataframe to utilize it.  An example of instantiating the class and running the methods is below:
-
+To just run the standard set of tests, which is K-Anonymity, PII Detection and a null row check you would do:
 ```python
-    from privacy_checks.mcprofiler import MCProfiler
-    profile = MCProfiler(df=DATA)
-    profile.generate_report()
-    profile.null_row_check()
-    profile.print_metrics()
-    profile.detect_pii_columns()
+from privacy_checks.runner import PrivacyRunner, CheckerSuites
+qi = ['Gender', 'City','State']
+sa = ['FICO_Score']
+runner = PrivacyRunner(checkers=CheckerSuites.std_privacy_suite(qi=qi, sa=sa), dry_run=False, full_suite_run=True, verbose=True)
+runner.evaluate_data(df)
 ```
+
+# Extending the Library
+The library was built based on the idea that new "checkers" could be easily added by engineers as business needs arise. The file basic_checker.py is what needs to be extended in order to create a new checker.
+
+Each new checker should overload the base function "check_dataset" with the logic you want to execute when the test suite is run.
+Make sure to make the return dict as pictured here:
+```
+    # {
+    #   message: str,
+    #   title: str <k-anonmity control>,
+    #   status: bool,
+    #   value: float OPTIONAL,
+    #   threshold: float OPTIONAL
+    # }
+```
+Please note for all checks the concept of a value being returned (beyond just a pass/fail status), or a threshold being set may not exist.  For this reason these are optional return keys, and if a checker does not return them, the library will elegantly handle this when creating a report.
+
+If you add a new check, or you want to define a custom set of "checkers" to be run for a certain test suite, you can edit the class CheckerSuites, located in runner.py.
+
+Imagine we wanted to add the PII Check to the standard privacy suite - we could edit the class as such:
+```
+from privacy_checks.checkers.basic_checker import BasicChecker
+from privacy_checks.checkers.null_row_checker import NullRowChecker
+from privacy_checks.checkers.pii_checker import PIIChecker
+...
+class CheckerSuites:
+  def std_privacy_suite(qi: list, sa: list = [], custom_thresholds: dict = {}): 
+    return [
+      KAnonymityChecker(qi=qi, k_threshold=custom_thresholds.get('k_threshold', 5)),    
+      NullRowChecker()
+    ]
+```
+Would become:
+```
+class CheckerSuites:
+  def std_privacy_suite(qi: list, sa: list = [], custom_thresholds: dict = {}): 
+    return [
+      KAnonymityChecker(qi=qi, k_threshold=custom_thresholds.get('k_threshold', 5)),    
+      NullRowChecker(),
+      PIIChecker()
+    ]
+```
+
+In here we can also declare a number of different test suite combinations, and set custom thresholds for each. You can imagine a scenario where we make suites that utilize the same tests, but have different more restrictive thresholds set - and how this could be utilized to "grade" the state of datasets.
 
 # Packaging the library
 This python library uses [setuptools](https://setuptools.pypa.io/en/latest/userguide/quickstart.html#) to manage the packaging of the library.
