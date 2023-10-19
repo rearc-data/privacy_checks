@@ -76,19 +76,28 @@ You only need to pass this class a dataframe to utilize it.  An example of insta
     profile.detect_pii_columns()
 ```
 
+# Packaging the library
+This python library uses [setuptools](https://setuptools.pypa.io/en/latest/userguide/quickstart.html#) to manage the packaging of the library.
 
+The project dependencies and details are described in [pyproject.toml](pyproject.toml).
+
+If needed, install the build tool:
+```shell
+pip install --upgrade build
+```
+
+Then build this project:
+```
+python -m build
+```
+
+Which will generate a `tar.gz` and `.whl` file in the `dist` directory.
+
+You can just upload the wheel file and install from there, this will be more efficient than installing from the source distribution.
 
 # Install
 
-You can use pip to install this library on Databricks.  Upload it to a volume in the databricks workspace you want to utilize it from, then target it with a pip install command:
-
-    %pip install privacy_checks -f /Volumes/path/to/package
-
-# To Recreate the Distribution Package
-Edit the details of setup.py to match your actual metadata, then run the following command from the root of the project:
-    python setup.py sdist bdist_wheel
-This will create both a source and binary distribution in the project root, which you can then upload to a volume in the databricks workspace you want to utilize it from, then target it with a pip install command:
-
-    %pip install privacy_checks -f /Volumes/path/to/package
-You can just upload the wheel file and install from there, this will be more efficient than installing from the source distribution.
-
+You can use pip to install this library on Databricks.  Upload the packaged wheel file to a volume in the databricks workspace you want to utilize it from and then target it with a pip install command:
+```notebook
+%pip install privacy_checks -f /Volumes/path/to/package
+```

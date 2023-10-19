@@ -1,8 +1,9 @@
 import pandas as pd
 import json
 from dataprofiler import Data, Profiler
+from basic_checker import BasicChecker
 
-class MCProfiler:
+class MCProfiler(BasicChecker(title='MC Profiler')):
     def __init__(
         self,
         df: pd.DataFrame,
@@ -21,7 +22,7 @@ class MCProfiler:
             raise TypeError("df must be a pandas DataFrame.")
         if not isinstance(detection_threshold, float):
             raise TypeError("detection_threshold must be a float.")
-        
+
         # Assign values to instance variables
         self.df = df
         self.data = Data(data=df, data_type='csv')
@@ -32,44 +33,45 @@ class MCProfiler:
 
     def generate_report(self):
         # Perform k-anonymity check on the DataFrame
-        if(not self.profile):
+        if (not self.profile):
             self.profile = Profiler(self.data)
-        if(not self.report):
-            self.report = self.profile.report(report_options={'output_format':'pretty'})
+        if (not self.report):
+            self.report = self.profile.report(
+                report_options={'output_format': 'pretty'})
         return self.report
 
     def null_row_check(self):
-        if(not self.report):
+        if (not self.report):
             self.generate_report()
         null_threshold = 0
         if self.report['global_stats']['row_is_null_ratio'] > null_threshold:
-            print("Null rows found in dataset")
-            raise Exception("Detected null rows within data set")
+            # print("Null rows found in dataset")
+            # raise Exception("Detected null rows within data set")
+            return (False, 0, 'Null rows found in dataset')
         else:
-            print("No null rows found in dataset")
-            return True
-    
+            # print("No null rows found in dataset")
+            return (True, 0, 'No null rows found in dataset')
+
     def print_metrics(self):
         # Stats for Reporting
-        if(not self.report):
+        if (not self.report):
             self.generate_report()
         print(f"Data set rows: {self.report['global_stats']['row_count']}")
         for col_data in self.report['data_stats']:
             all_stats = col_data['statistics']
             stats = {
-            'unique_ratio': all_stats['unique_ratio'],
-            'variance': all_stats['variance'],
-            'stddev': all_stats['stddev'],
-            'skewness': all_stats['skewness'],
-            'kurtosis': all_stats['kurtosis']
+                'unique_ratio': all_stats['unique_ratio'],
+                'variance': all_stats['variance'],
+                'stddev': all_stats['stddev'],
+                'skewness': all_stats['skewness'],
+                'kurtosis': all_stats['kurtosis']
             }
             print(f"{col_data['column_name']}: {json.dumps(stats)}")
-    
+
     def detect_pii_columns(self):
         # PII Labels we care about
-        if(not self.report):
+        if (not self.report):
             self.generate_report()
-
 
         detected_pii_columns = False
         for col_data in self.report["data_stats"]:
@@ -87,8 +89,9 @@ class MCProfiler:
                 detected_pii_columns = True
 
         if detected_pii_columns:
-            print("Detected unexpected privacy columns!")
-            raise Exception("Detected data columns with potential PII")
+            # print("Detected unexpected privacy columns!")
+            # raise Exception("Detected data columns with potential PII")
+            return (False, 0, 'Detected data columns with potential PII')
         else:
             print("No unexpected privacy columns detected")
-            return True
+            return (True, 0, 'No unexpected privacy columns detected')
