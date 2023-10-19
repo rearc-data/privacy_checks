@@ -18,8 +18,6 @@ class PIIChecker(BasicChecker):
         super().__init__('PII Checker')
         if not isinstance(labels, list):
             raise TypeError("labels must be a list.")
-        if not isinstance(df, pd.DataFrame):
-            raise TypeError("df must be a pandas DataFrame.")
         if not isinstance(detection_threshold, float):
             raise TypeError("detection_threshold must be a float.")
 

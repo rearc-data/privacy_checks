@@ -4,7 +4,7 @@ import pandas as pd
 # Make a fake dataframe with user, age and disease columns
 df = pd.DataFrame(
     {
-        "user": ["A", "B", "C", "D", "E", "F"],
+        "user": ["Mark Phillips", "B", "C", "D", "E", "F"],
         "age": [10, 10, 21, 23, 32, 35],
         "disease": ["flu", "asd", "cold", "sdaff", "nail", "sun"],
     }

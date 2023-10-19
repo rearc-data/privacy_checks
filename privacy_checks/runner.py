@@ -1,6 +1,7 @@
 from pandas import DataFrame
 from privacy_checks.checkers.basic_checker import BasicChecker
 from privacy_checks.checkers.null_row_checker import NullRowChecker
+from privacy_checks.checkers.pii_checker import PIIChecker
 from privacy_checks.checkers.k_anonymity_checker import KAnonymityChecker
 from privacy_checks.checkers.alpha_k_anonymity_checker import AlphaKAnonymityChecker
 from privacy_checks.checkers.l_diversity_checker import LDiversityChecker
@@ -75,7 +76,8 @@ class CheckerSuites:
       CLDiversityChecker(qi=qi, sa=sa, c_threshold=custom_thresholds.get('c_threshold', 2)),
       TClosenessChecker(qi=qi, sa=sa, t_threshold=custom_thresholds.get('t_threshold', 0.2)),
       DeltaDisclosurePrivacyChecker(qi=qi, sa=sa, delta_threshold=custom_thresholds.get('delta_threshold', 0.2)),
-      NullRowChecker()
+      NullRowChecker(),
+      PIIChecker()
     ]
   
   # PrivacyRunner(checkers=CheckerSuite.std_privacy_suite(qi=['fake','columns'], sa=['disease'])).evaluate_data(df)
