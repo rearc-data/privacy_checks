@@ -3,7 +3,7 @@ from pycanon import anonymity, report
 from .basic_checker import BasicChecker
 
 
-class KAnonymityChecker(BasicChecker):
+class ExampleChecker(BasicChecker):
     def __init__(
         self,
         # example_threshold: int = None,
