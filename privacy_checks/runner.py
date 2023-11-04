@@ -10,6 +10,9 @@ from privacy_checks.checkers.c_l_diversity_checker import CLDiversityChecker
 from privacy_checks.checkers.t_closeness_checker import TClosenessChecker
 from privacy_checks.checkers.delta_disclosure_privacy_checker import DeltaDisclosurePrivacyChecker
 
+# we import the new checker into the runner class
+from privacy_checks.checkers.example_checker import ExampleChecker
+
 
 # Single entry point for interacting with utility instead of individual classes for each checker
 # - Support providing df
@@ -79,5 +82,10 @@ class CheckerSuites:
       NullRowChecker(),
       PIIChecker()
     ]
+  def example_privacy_suite(qi: list, sa: list = [], custom_thresholds: dict = {}):
+    return [
+      ExampleChecker(example_threshold=custom_thresholds.get('example_threshold', 5))
+    ]
+
   
   # PrivacyRunner(checkers=CheckerSuite.std_privacy_suite(qi=['fake','columns'], sa=['disease'])).evaluate_data(df)
