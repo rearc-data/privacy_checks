@@ -8,7 +8,7 @@ class NullRowChecker(BasicChecker):
         super().__init__('Null Row Checker')
             
     def check_dataset(self, df):
-        null_rows = df.isnull().any(axis=1)
+        null_rows = df.isnull().all(axis=1)
         null_row_count = null_rows.sum()
         if null_rows.any():
             return {
