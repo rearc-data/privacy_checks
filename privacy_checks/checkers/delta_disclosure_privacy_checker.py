@@ -30,7 +30,7 @@ class DeltaDisclosurePrivacyChecker(BasicChecker):
                 'value': 0,
                 'threshold': None
             }
-        elif self.delta_threshold < delta_disclosure_privacy:
+        elif self.delta_threshold > delta_disclosure_privacy:
             return {
                 'message': 'Delta-Disclosure Privacy check has failed. Either lower your delta threshold or employ techniques to further anonymize this dataset if possible. Delta-Disclosure Privacy value: {delta_disclosure_privacy}',
                 'title': 'Delta-Disclosure Privacy control',
